@@ -78,11 +78,13 @@ export const updateLikes = async (id, callback) => {
         likesCounter: likesCount - 1,
       });
       callback(false);
+    //   return false
     } else {
       await updateDoc(postRef, {
         likes: arrayUnion(userIdentifier),
         likesCounter: likesCount + 1,
       });
       callback(true);
+    //   return true
     }
   };

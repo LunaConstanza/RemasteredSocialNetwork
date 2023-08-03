@@ -86,7 +86,6 @@ const dashboard = (navigateTo) => {
         dataPost().then(res => {
             res.forEach(doc => {
                 const post = doc.data();
-    
                 html += `
                     <div class="mainDash_board_publications_content">
                         <div class="mainDash_board_publications_content_user">
@@ -108,7 +107,7 @@ const dashboard = (navigateTo) => {
                 } else {
                     html += `
                         </div>
-                        <p class="mainDash_board_publications_content_text">${post.description}</p>
+                        <p id="${doc.id}" class="mainDash_board_publications_content_text">${post.description}</p>
                         <div class="mainDash_board_publications_content_star">
                             <button class="btn-like mainDash_board_publications_content_starR" value="${doc.id}"><i class="fa-regular fa-star"></i></button>
                             <p>${post.likesCounter} Likes</p>
@@ -118,10 +117,12 @@ const dashboard = (navigateTo) => {
 
             });
             scrollContent.innerHTML = html;
-            
+                
             const btnsEdit = document.querySelectorAll('.btnEdit');
             const edits = document.querySelectorAll('.mainDash_board_publications_content_text');
             const btnDelete = document.querySelectorAll('.btnDelete');
+            const likeBtn = document.querySelectorAll('.btn-like');
+            
             btnsEdit.forEach(btn => {
                 btn.addEventListener('click', () => {
                     edits.forEach(post => {
@@ -159,27 +160,30 @@ const dashboard = (navigateTo) => {
 
             btnDelete.forEach((btn) => {
                 btn.addEventListener('click', () => {
+                    console.log('click');
                     if (confirm("¿Estás segura de eliminar esta publicación?")) {
                         deletePost(btn.value).then(() => postDisplay());
                     }
                 });
             });
 
-            const likeBtn = document.querySelectorAll('.btn-like');
+            //DARLE O QUITARLE LIKE
             likeBtn.forEach((btnL) => {
-                btnL.addEventListener('click', async () => {
-                const alerta = (valid) => {
-                    if (valid) {
-                        btnL.innerHTML = '';
-                        btnL.innerHTML = '<i class="fa-solid fa-star"></i>'
-                        postDisplay()
-                    } else {
-                        btnL.innerHTML = '';
-                        btnL.innerHTML = '<i class="fa-regular fa-star"></i>'
-                        postDisplay()
+                btnL.addEventListener('click', () => {
+                    console.log('click like');
+                    const alerta = (valid) => {
+                        if (valid) {
+                            btnL.innerHTML = '';
+                            btnL.innerHTML = '<i class="fa-solid fa-star"></i>'
+                            postDisplay()
+                        } else {
+                            btnL.innerHTML = '';
+                            btnL.innerHTML = '<i class="fa-regular fa-star"></i>'
+                            postDisplay()
+                        }
                     }
-                }
-                updateLikes(btnL.value, alerta);
+                    updateLikes(btnL.value, alerta);
+                    postDisplay();
               });
             });
 
