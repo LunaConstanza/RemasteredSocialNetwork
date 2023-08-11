@@ -15,15 +15,10 @@ const dashboard = (navigateTo) => {
     profile.classList.add('mainDash_profile');
     const user = document.createElement('h4');
     user.setAttribute('id', 'dataUser');
-    console.log(auth.currentUser);
-    if (auth.currentUser === null) {
-        dataUser().then(displayName => {
-            user.innerHTML = `<span class="h4bold">Hola!</span> ${displayName}`;
-    
-        })
-    } else {
-        user.innerHTML = `<span class="h4bold">Hola!</span> ${auth.currentUser.displayName}`;
-    }
+    // console.log(dataUser());
+    dataUser().then(displayName => {
+        user.innerHTML = `<span class="h4bold">Hola!</span> ${displayName}`;
+    })
 
     const btnLogOut = document.createElement('button');
     btnLogOut.setAttribute('id', 'btnLogOut');
@@ -35,8 +30,17 @@ const dashboard = (navigateTo) => {
     board.classList.add('mainDash_board');
 
     // ------ CREAR POST ---------
+    let divOverlay = document.createElement("div");
+    divOverlay.classList.add("overlay");
+    divOverlay.setAttribute("id", "overlay");
+
     const createPost = document.createElement('div');
     createPost.classList.add('mainDash_board_createPost');
+
+    const btnClose = document.createElement("i");
+    btnClose.classList.add("fa-solid");
+    btnClose.classList.add("fa-xmark");
+
     const titleCreatePost = document.createElement('h5');
     titleCreatePost.classList.add('mainDash_board_createPost_title');
     titleCreatePost.innerHTML = `¿Qué vas a jugar hoy ?`;
@@ -48,8 +52,9 @@ const dashboard = (navigateTo) => {
     const inputCreatePost = document.createElement('textarea');
     inputCreatePost.classList.add('mainDash_board_createPost_textarea');
     inputCreatePost.setAttribute('placeholder', 'Escribe aquí...');
-    inputCreatePost.setAttribute('maxLength', '500');
+    inputCreatePost.setAttribute('maxLength', '1000');
     inputCreatePost.setAttribute('required', '');
+    inputCreatePost.setAttribute('autofocus', '');
     inputCreatePost.setAttribute('id', 'text-description');
 
     const submitPost = document.createElement('button');
@@ -65,6 +70,9 @@ const dashboard = (navigateTo) => {
     const titlePublications = document.createElement('h5');
     titlePublications.classList.add('mainDash_board_publications_topbar_title')
     titlePublications.innerHTML = `<i class="fa-solid fa-bomb"></i> Publicaciones`;
+    const btnPlus = document.createElement('button');
+    btnPlus.classList.add('mainDash_board_publications_topbar_plus');
+    btnPlus.innerHTML = `Publicar <i class="fa-solid fa-plus"></i>`
     const btnRefresh = document.createElement('button');
     btnRefresh.classList.add('mainDash_board_publications_topbar_refresh');
     btnRefresh.innerHTML = `<i class="fa-solid fa-arrows-rotate"></i>`
@@ -75,22 +83,36 @@ const dashboard = (navigateTo) => {
     // ------- APPENDCHILD -------------
     containerDashboard.append(headerLogo(), profile, board);
     profile.append(user, btnLogOut);
-    board.append(createPost, publications);
-    createPost.append(titleCreatePost, formCreatePost);
+    board.append(divOverlay, publications);
+    divOverlay.appendChild(createPost)
+    createPost.append(btnClose, titleCreatePost, formCreatePost);
     formCreatePost.append(inputCreatePost, submitPost);
     publications.append(topBar, scrollContent);
-    topBar.append(titlePublications, btnRefresh);
+    topBar.append(titlePublications, btnPlus, btnRefresh);
 
     const postDisplay = () => {
         let html = '';
         dataPost().then(res => {
             res.forEach(doc => {
                 const post = doc.data();
+                const date = post.datepost.toDate().toString().slice(0,21)
+                const country = post.datepost.toDate().toString().slice(52, -1);
+                
                 html += `
-                    <div class="mainDash_board_publications_content">
-                        <div class="mainDash_board_publications_content_user">
-                            <h6>${post.name} publicó:</h6>`;
-    
+                <div class="mainDash_board_publications_content">
+                <div class="mainDash_board_publications_content_user">
+                <h6>${post.name} publicó:</h6>`;
+                
+                const likes = () => {
+                    if(post.likes.includes(post.uid)){
+                        // console.log('le di like');
+                        return '<i class="fa-solid fa-star"></i>'
+                    } else {
+                        // console.log('no le di like');
+                        return '<i class="fa-regular fa-star"></i>'
+                    }
+                }
+
                 if (post.uid === auth.currentUser.uid) {
                     html += `
                             <div class="mainDash_board_publications_content_user_btns">
@@ -100,8 +122,11 @@ const dashboard = (navigateTo) => {
                         </div>
                         <p id="${doc.id}" class="mainDash_board_publications_content_text">${post.description}</p>
                         <div class="mainDash_board_publications_content_star">
-                            <button class="btn-like mainDash_board_publications_content_starR" value="${doc.id}"><i class="fa-regular fa-star"></i></button>
-                            <p>${post.likesCounter} Likes</p>
+                            <div class="mainDash_board_publications_content_starDiv">
+                                <button class="btn-like mainDash_board_publications_content_starR" value="${doc.id}">${likes()}</button>
+                                <p>${post.likesCounter} Likes</p>
+                            </div>
+                            <p for="date">${date}hrs ${country}</p>
                         </div>
                     </div>`;
                 } else {
@@ -109,8 +134,11 @@ const dashboard = (navigateTo) => {
                         </div>
                         <p id="${doc.id}" class="mainDash_board_publications_content_text">${post.description}</p>
                         <div class="mainDash_board_publications_content_star">
-                            <button class="btn-like mainDash_board_publications_content_starR" value="${doc.id}"><i class="fa-regular fa-star"></i></button>
-                            <p>${post.likesCounter} Likes</p>
+                            <div class="mainDash_board_publications_content_starDiv">
+                                <button class="btn-like mainDash_board_publications_content_starR" value="${doc.id}">${likes()}</button>
+                                <p>${post.likesCounter} Likes</p>
+                            </div>
+                            <p for="date">${date}hrs ${country}</p>
                         </div>
                     </div>`;
                 }
@@ -136,27 +164,31 @@ const dashboard = (navigateTo) => {
 
                             btnDelete.forEach((btnD) => {
                                 if (btn.value === btnD.value) {
-                                    // btnD.classList.remove('btnDelete');
-                                    // btnD.classList.add('btnCancel')
-                                    // btnD.innerHTML = '<i class="fa-solid fa-xmark">';
-                                    btnD.innerHTML = '';
+                                    btnD.classList.remove('btnDelete');
+                                    btnD.classList.add('btnCancel');
+                                    btnD.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+                                    // btnD.innerHTML = '';
+
+                                    const btnCancel = document.querySelector('.btnCancel');
+                                    btnCancel.addEventListener('click', () => {
+                                        console.log('este click');
+                                        postDisplay();
+                                    })
                                 }
-                                btnD.addEventListener('click', () => {
-                                    postDisplay();
-                                })
+
                             });
-
-
-
+                            
+                            
                             btn.addEventListener('click', () => {
                                 editPost(btn.value, input.value).then(() => postDisplay());
                             })
-
+                            
                         }
                     });
                 })
                 
             })
+
 
             btnDelete.forEach((btn) => {
                 btn.addEventListener('click', () => {
@@ -170,19 +202,7 @@ const dashboard = (navigateTo) => {
             //DARLE O QUITARLE LIKE
             likeBtn.forEach((btnL) => {
                 btnL.addEventListener('click', () => {
-                    console.log('click like');
-                    const alerta = (valid) => {
-                        if (valid) {
-                            btnL.innerHTML = '';
-                            btnL.innerHTML = '<i class="fa-solid fa-star"></i>'
-                            postDisplay()
-                        } else {
-                            btnL.innerHTML = '';
-                            btnL.innerHTML = '<i class="fa-regular fa-star"></i>'
-                            postDisplay()
-                        }
-                    }
-                    updateLikes(btnL.value, alerta);
+                    updateLikes(btnL.value);
                     postDisplay();
               });
             });
@@ -191,14 +211,29 @@ const dashboard = (navigateTo) => {
     };
     postDisplay();
     
+    // ----- Abrir modal para publicar ------
+    btnPlus.addEventListener('click', () => {
+        inputCreatePost.focus();
+        divOverlay.classList.add("active");
+        createPost.classList.add("active");
+    })
+
     // ----- PUBLICAR POST -----------
     formCreatePost.addEventListener('submit', (e) => {
         e.preventDefault();
         const post = inputCreatePost.value;
         savePost(post);
         formCreatePost.reset();
+        divOverlay.classList.remove("active");
+        createPost.classList.remove("active");
         postDisplay();
-    });    
+    });
+    
+    // Cerrar modal
+    btnClose.addEventListener("click", () => {
+        divOverlay.classList.remove("active");
+        createPost.classList.remove("active");
+    });
 
     // ----- REFRESCAR POST -----------
     btnRefresh.addEventListener('click', () => {

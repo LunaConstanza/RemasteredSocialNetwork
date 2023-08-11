@@ -65,7 +65,7 @@ export const deletePost = async (id) => {
 }
 
 // ------------ LIKES & DISLIKE ----------------
-export const updateLikes = async (id, callback) => {
+export const updateLikes = async (id) => {
     const userIdentifier = auth.currentUser.uid;
     const postRef = doc(db, "Posts", id);
     const docSnap = await getDoc(postRef);
@@ -77,14 +77,10 @@ export const updateLikes = async (id, callback) => {
         likes: arrayRemove(userIdentifier),
         likesCounter: likesCount - 1,
       });
-      callback(false);
-    //   return false
     } else {
       await updateDoc(postRef, {
         likes: arrayUnion(userIdentifier),
         likesCounter: likesCount + 1,
       });
-      callback(true);
-    //   return true
     }
   };

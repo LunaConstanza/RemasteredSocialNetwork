@@ -10,6 +10,10 @@ import {
   signInWithPopup,
   signOut 
 } from "firebase/auth";
+import {
+  FieldValue,
+  Timestamp, serverTimestamp
+} from "firebase/firestore"
 import { saveUser } from "./store.js";
 
 // Initialize Firebase Authentication and get a reference to the service
@@ -39,11 +43,23 @@ export const registerGoogle = (callback) => {
   signInWithPopup(auth, provider)
   .then((result) => {
     // This gives you a Google Access Token. You can use it to access the Google API.
+    console.log(result);
     const credential = GoogleAuthProvider.credentialFromResult(result);
+    console.log(credential);
     const token = credential.accessToken;
+    console.log(token);
+    console.log(result);
     // The signed-in user info.
     const user = result.user;
     // IdP data available using getAdditionalUserInfo(result)
+    console.log(user.metadata.createdAt);
+    console.log(user.metadata.lastLoginAt - 10);
+
+    if (user.metadata.createdAt >= (user.metadata.lastLoginAt - 10) ) {
+      console.log('guardamos usuario');
+      saveUser(user.uid, user.displayName, user.phoneNumber)
+    }
+
     callback(true)
   }).catch((error) => {
     // Handle Errors here.
