@@ -1,4 +1,5 @@
-import { auth, closeSesion, currentChange } from "../lib/auth.js";
+import {auth} from "../lib/index.js"
+import { closeSesion, currentChange } from "../lib/auth.js";
 import { dataPost, savePost, dataUser, deletePost, editPost, updateLikes } from "../lib/store.js";
 import { headerLogo } from "./h&f.js";
 
@@ -98,13 +99,8 @@ const dashboard = (navigateTo) => {
                 const date = post.datepost.toDate().toString().slice(0,21)
                 const country = post.datepost.toDate().toString().slice(52, -1);
                 
-                html += `
-                <div class="mainDash_board_publications_content">
-                <div class="mainDash_board_publications_content_user">
-                <h6>${post.name} publicó:</h6>`;
-                
-                const likes = () => {
-                    if(post.likes.includes(post.uid)){
+                const likes = (uid) => {
+                    if(post.likes.includes(uid)){
                         // console.log('le di like');
                         return '<i class="fa-solid fa-star"></i>'
                     } else {
@@ -112,6 +108,11 @@ const dashboard = (navigateTo) => {
                         return '<i class="fa-regular fa-star"></i>'
                     }
                 }
+
+                html += `
+                <div class="mainDash_board_publications_content">
+                <div class="mainDash_board_publications_content_user">
+                <h6>${post.name} publicó:</h6>`;
 
                 if (post.uid === auth.currentUser.uid) {
                     html += `
@@ -123,7 +124,7 @@ const dashboard = (navigateTo) => {
                         <p id="${doc.id}" class="mainDash_board_publications_content_text">${post.description}</p>
                         <div class="mainDash_board_publications_content_star">
                             <div class="mainDash_board_publications_content_starDiv">
-                                <button class="btn-like mainDash_board_publications_content_starR" value="${doc.id}">${likes()}</button>
+                                <button class="btn-like mainDash_board_publications_content_starR" value="${doc.id}">${likes(auth.currentUser.uid)}</button>
                                 <p>${post.likesCounter} Likes</p>
                             </div>
                             <p for="date">${date}hrs ${country}</p>
@@ -135,7 +136,7 @@ const dashboard = (navigateTo) => {
                         <p id="${doc.id}" class="mainDash_board_publications_content_text">${post.description}</p>
                         <div class="mainDash_board_publications_content_star">
                             <div class="mainDash_board_publications_content_starDiv">
-                                <button class="btn-like mainDash_board_publications_content_starR" value="${doc.id}">${likes()}</button>
+                                <button class="btn-like mainDash_board_publications_content_starR" value="${doc.id}">${likes(auth.currentUser.uid)}</button>
                                 <p>${post.likesCounter} Likes</p>
                             </div>
                             <p for="date">${date}hrs ${country}</p>
@@ -178,7 +179,6 @@ const dashboard = (navigateTo) => {
 
                             });
                             
-                            
                             btn.addEventListener('click', () => {
                                 editPost(btn.value, input.value).then(() => postDisplay());
                             })
@@ -188,7 +188,6 @@ const dashboard = (navigateTo) => {
                 })
                 
             })
-
 
             btnDelete.forEach((btn) => {
                 btn.addEventListener('click', () => {

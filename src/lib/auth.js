@@ -1,6 +1,6 @@
-import { app } from "./firebaseConfig.js";
 import { 
-  getAuth,
+  auth,
+  provider,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   onAuthStateChanged,
@@ -9,16 +9,13 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   signOut 
-} from "firebase/auth";
+} from "./index.js";
 import {
   FieldValue,
   Timestamp, serverTimestamp
 } from "firebase/firestore"
 import { saveUser } from "./store.js";
 
-// Initialize Firebase Authentication and get a reference to the service
-export const auth = getAuth(app);
-const provider = new GoogleAuthProvider();
 let currentUser;
 
 // Registro con usuario y constraseña

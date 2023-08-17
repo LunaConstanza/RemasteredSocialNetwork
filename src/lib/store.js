@@ -1,8 +1,20 @@
-import { app } from "./firebaseConfig.js";
-import { auth } from "./auth.js";
-import { getFirestore, addDoc, collection, Timestamp, getDocs, getDoc, query, orderBy, doc, deleteDoc, updateDoc, arrayRemove,
-    arrayUnion } from "firebase/firestore";
-const db = getFirestore(app);
+import {
+    auth,
+    db,
+    addDoc,
+    collection,
+    Timestamp,
+    getDocs,
+    getDoc,
+    query,
+    orderBy,
+    doc,
+    deleteDoc,
+    updateDoc,
+    arrayRemove,
+    arrayUnion
+} from "./index.js";
+
 
 export const saveUser = async (userId, displayName, date) => {
     await addDoc(collection(db, "Users"), {
