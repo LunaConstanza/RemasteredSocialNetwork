@@ -58,6 +58,11 @@ const dashboard = (navigateTo) => {
     inputCreatePost.setAttribute('autofocus', '');
     inputCreatePost.setAttribute('id', 'text-description');
 
+    const inputImg = document.createElement('input');
+    inputImg.setAttribute('accept', 'image/jpg');
+    inputImg.setAttribute('type', 'file');
+
+
     const submitPost = document.createElement('button');
     submitPost.setAttribute('type', 'submit');
     submitPost.classList.add('mainDash_board_createPost_submit');
@@ -87,7 +92,7 @@ const dashboard = (navigateTo) => {
     board.append(divOverlay, publications);
     divOverlay.appendChild(createPost)
     createPost.append(btnClose, titleCreatePost, formCreatePost);
-    formCreatePost.append(inputCreatePost, submitPost);
+    formCreatePost.append(inputCreatePost, inputImg, submitPost);
     publications.append(topBar, scrollContent);
     topBar.append(titlePublications, btnPlus, btnRefresh);
 
@@ -99,18 +104,34 @@ const dashboard = (navigateTo) => {
                 const date = post.datepost.toDate().toString().slice(0,21)
                 const country = post.datepost.toDate().toString().slice(52, -1);
                 
+                const content = () => {
+                    if (post.image) {
+                        return '<div class="mainDash_board_publications_content1">'
+                    } else {
+                        return '<div class="mainDash_board_publications_content2">'
+                    }
+                }
+
                 const likes = (uid) => {
                     if(post.likes.includes(uid)){
                         // console.log('le di like');
-                        return '<i class="fa-solid fa-star"></i>'
+                        return '<i class="fa-solid fa-star"></i>';
                     } else {
                         // console.log('no le di like');
-                        return '<i class="fa-regular fa-star"></i>'
+                        return '<i class="fa-regular fa-star"></i>';
+                    }
+                }
+
+                const img = () => {
+                    if (post.image) {
+                        return `<div class="mainDash_board_publications_content_img"><img width="80%" src="${post.image}"/></div>`;
+                    } else {
+                        return '';
                     }
                 }
 
                 html += `
-                <div class="mainDash_board_publications_content">
+                ${content()}
                 <div class="mainDash_board_publications_content_user">
                 <h6>${post.name} publicó:</h6>`;
 
@@ -121,6 +142,7 @@ const dashboard = (navigateTo) => {
                                 <button type="button" class="btnDelete" value="${doc.id}"><i class="fa-solid fa-trash"></i></button>
                             </div>
                         </div>
+                        ${img()}
                         <p id="${doc.id}" class="mainDash_board_publications_content_text">${post.description}</p>
                         <div class="mainDash_board_publications_content_star">
                             <div class="mainDash_board_publications_content_starDiv">
@@ -133,6 +155,7 @@ const dashboard = (navigateTo) => {
                 } else {
                     html += `
                         </div>
+                        ${img()}
                         <p id="${doc.id}" class="mainDash_board_publications_content_text">${post.description}</p>
                         <div class="mainDash_board_publications_content_star">
                             <div class="mainDash_board_publications_content_starDiv">
@@ -221,7 +244,9 @@ const dashboard = (navigateTo) => {
     formCreatePost.addEventListener('submit', (e) => {
         e.preventDefault();
         const post = inputCreatePost.value;
-        savePost(post);
+        const img = inputImg.files;
+        console.log(img[0]);
+        savePost(post, img[0]);
         formCreatePost.reset();
         divOverlay.classList.remove("active");
         createPost.classList.remove("active");

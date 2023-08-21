@@ -14,6 +14,7 @@ import {
     arrayRemove,
     arrayUnion
 } from "./index.js";
+import { saveImg } from "./storage.js";
 
 
 export const saveUser = async (userId, displayName, date) => {
@@ -35,16 +36,18 @@ export const dataUser = async () => {
       return user.join('');
 }
 
-export const savePost = async (description) => {
+export const savePost = async (description, img) => {
+    saveImg(img)
     if (auth.currentUser.displayName == null) {
         dataUser().then(user => {
             addDoc(collection(db, "Posts"), {
                 uid: auth.currentUser.uid,
                 name: user,
                 description: description,
+                image: img,
+                datepost: Timestamp.fromDate(new Date()),
                 likes: [],
                 likesCounter: 0,
-                datepost: Timestamp.fromDate(new Date()),
             });
         })
     } else {
@@ -52,9 +55,10 @@ export const savePost = async (description) => {
             uid: auth.currentUser.uid,
             name: auth.currentUser.displayName,
             description: description,
+            image: img,
+            datepost: Timestamp.fromDate(new Date()),
             likes: [],
             likesCounter: 0,
-            datepost: Timestamp.fromDate(new Date()),
         });
     }
     
