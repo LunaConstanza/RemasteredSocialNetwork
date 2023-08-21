@@ -64,7 +64,7 @@ const home = (navigateTo) => {
     btnGoogle.innerHTML = `<i class="fa-brands fa-google"></i> Iniciar sesión con Google`;
 
     const linkRegister = document.createElement("p");
-    linkRegister.innerHTML = `¿No tienes cuenta? <a href="/register" id="linkReg">Regístrate</a>`;
+    linkRegister.innerHTML = `¿No tienes cuenta? <a href="${navigateTo(/register)}" id="linkReg">Regístrate</a>`;
 
     containerLogin.append(headerLogo(), subTitleLogin, formLogin);
     formLogin.append(userLogin, passwordLogin, btnLogIn, textReset, divOverlay);
