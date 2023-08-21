@@ -64,7 +64,10 @@ const home = (navigateTo) => {
     btnGoogle.innerHTML = `<i class="fa-brands fa-google"></i> Iniciar sesión con Google`;
 
     const linkRegister = document.createElement("p");
-    linkRegister.innerHTML = `¿No tienes cuenta? <a href="${navigateTo(/register)}" id="linkReg">Regístrate</a>`;
+    linkRegister.innerHTML = `¿No tienes cuenta?`;
+    const aLinkRegister = document.createElement("a");
+    aLinkRegister.setAttribute("id", "linkReg")
+    aLinkRegister.innerHTML = `Regístrate`
 
     containerLogin.append(headerLogo(), subTitleLogin, formLogin);
     formLogin.append(userLogin, passwordLogin, btnLogIn, textReset, divOverlay);
@@ -72,6 +75,11 @@ const home = (navigateTo) => {
     divPopup.append(btnClose, h3Popup, textPopup, formResetPass);
     formResetPass.append(inputEmail, resetPassword);
     formLogin.append(btnGoogle, linkRegister);
+    linkRegister.appendChild(aLinkRegister);
+
+    aLinkRegister.addEventListener("click", ()=> {
+        navigateTo('/register')
+    });
 
     /*Hacer login para entrar al muro*/
     formLogin.addEventListener("submit", (e) => {
