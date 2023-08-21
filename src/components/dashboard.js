@@ -244,9 +244,9 @@ const dashboard = (navigateTo) => {
     formCreatePost.addEventListener('submit', (e) => {
         e.preventDefault();
         const post = inputCreatePost.value;
-        const img = inputImg.files;
-        console.log(img[0]);
-        savePost(post, img[0]);
+        // const img = inputImg.files;
+        // console.log(img[0]);
+        savePost(post);
         formCreatePost.reset();
         divOverlay.classList.remove("active");
         createPost.classList.remove("active");

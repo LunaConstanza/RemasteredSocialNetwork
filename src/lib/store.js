@@ -36,15 +36,15 @@ export const dataUser = async () => {
       return user.join('');
 }
 
-export const savePost = async (description, img) => {
-    saveImg(img)
+export const savePost = async (description) => {
+    // saveImg(img)
     if (auth.currentUser.displayName == null) {
         dataUser().then(user => {
             addDoc(collection(db, "Posts"), {
                 uid: auth.currentUser.uid,
                 name: user,
                 description: description,
-                image: img,
+                image: "img",
                 datepost: Timestamp.fromDate(new Date()),
                 likes: [],
                 likesCounter: 0,
@@ -55,7 +55,7 @@ export const savePost = async (description, img) => {
             uid: auth.currentUser.uid,
             name: auth.currentUser.displayName,
             description: description,
-            image: img,
+            image: "img",
             datepost: Timestamp.fromDate(new Date()),
             likes: [],
             likesCounter: 0,
