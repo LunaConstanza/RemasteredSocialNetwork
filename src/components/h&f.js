@@ -6,7 +6,7 @@ export const headerLogo = () => {
     logo.classList.add("logoRS");
     logo.setAttribute("width", "200px");
     logo.setAttribute("src", imgLogo);
-    logo.setAttribute("alt", "Lodo red social");
+    logo.setAttribute("alt", "Logo red social");
   
     header.appendChild(logo);
   
