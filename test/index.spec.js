@@ -32,11 +32,11 @@ describe('registerUser', () => {
 
   it('debería ejecutar createUserWithEmailAndPassword', async () => {
     await registerUser(email, password, displayName, date)
-    expect(createUserWithEmailAndPassword).toHaveBeenCalled();
+    return expect(createUserWithEmailAndPassword).toHaveBeenCalled();
   });
 
   it('debería ejecutar createUserWithEmailAndPassword', async () => {
     await registerUser(email, password, displayName, date)
-    expect(createUserWithEmailAndPassword).toHaveBeenCalledWith(auth, email,password);
+    return expect(createUserWithEmailAndPassword).toHaveBeenCalledWith(auth, email,password);
   });
 });
