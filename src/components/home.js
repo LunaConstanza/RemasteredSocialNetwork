@@ -64,7 +64,7 @@ const home = (navigateTo) => {
     btnGoogle.innerHTML = `<i class="fa-brands fa-google"></i> Iniciar sesión con Google`;
 
     const linkRegister = document.createElement("p");
-    linkRegister.innerHTML = `¿No tienes cuenta?`;
+    linkRegister.innerHTML = `¿No tienes cuenta? `;
     const aLinkRegister = document.createElement("a");
     aLinkRegister.setAttribute("id", "linkReg")
     aLinkRegister.innerHTML = `Regístrate`

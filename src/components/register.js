@@ -50,12 +50,15 @@ const register = (navigateTo) => {
     btnSend.classList.add("submitRegister");
 
     const btnBack = document.createElement('a');
-    btnBack.setAttribute('href', '/');
     btnBack.classList.add('btnBack');
     btnBack.innerHTML = `<i class="fa-solid fa-arrow-left"></i> VOLVER`;
-
+    
     containerRegister.append(headerLogo(), subTitle, formRegister);
     formRegister.append(inputNameAndLastName, inputMail, inputPassword, labelDate, inputDate, btnSend, btnBack);
+    
+    btnBack.addEventListener("click", () => {
+        navigateTo('/')
+    })
 
     formRegister.addEventListener("submit", (e) => {
         e.preventDefault();
