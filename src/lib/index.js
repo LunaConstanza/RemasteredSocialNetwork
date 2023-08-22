@@ -29,7 +29,7 @@ import {
     arrayRemove,
     arrayUnion
 } from "firebase/firestore";
-import { getStorage, ref, uploadBytes, uploadBytesResumable } from "firebase/storage";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 // Initialize Firebase Authentication and get a reference to the service
@@ -66,5 +66,5 @@ export {
     storage,
     ref,
     uploadBytes,
-    uploadBytesResumable
+    getDownloadURL
 }

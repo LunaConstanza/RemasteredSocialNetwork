@@ -10,23 +10,19 @@ import {
   signInWithPopup,
   signOut 
 } from "./index.js";
-import {
-  FieldValue,
-  Timestamp, serverTimestamp
-} from "firebase/firestore"
 import { saveUser } from "./store.js";
 
 let currentUser;
 
 // Registro con usuario y constraseña
-export const registerUser = (email, password, displayName, date) => {
+export const registerUser = (email, password, displayName, image) => {
   createUserWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       // Signed in 
       const user = userCredential.user;
       const userId = user.uid;
       verification(auth);
-      saveUser(userId, displayName, date)
+      saveUser(userId, displayName, image)
     })
     .catch((error) => {
       const errorCode = error.code;
@@ -54,7 +50,7 @@ export const registerGoogle = (callback) => {
 
     if (user.metadata.createdAt >= (user.metadata.lastLoginAt - 10) ) {
       console.log('guardamos usuario');
-      saveUser(user.uid, user.displayName, user.phoneNumber)
+      saveUser(user.uid, user.displayName, user.photoURL)
     }
 
     callback(true)

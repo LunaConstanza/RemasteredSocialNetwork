@@ -12,39 +12,63 @@ import {
     deleteDoc,
     updateDoc,
     arrayRemove,
-    arrayUnion
+    arrayUnion,
+    storage,
+    ref,
+    uploadBytes,
+    getDownloadURL
 } from "./index.js";
-import { saveImg } from "./storage.js";
 
+const savePhoto = async (file) => {
+    const storageRef = ref(storage, `imagesUsers/${file.name}`);
+    await uploadBytes(storageRef, file);
+    return await getDownloadURL(storageRef);
+}
 
-export const saveUser = async (userId, displayName, date) => {
+export const saveUser = async (userId, displayName, image) => {
+    if(typeof(image) === 'object'){
+        image = await savePhoto(image)
+    }
     await addDoc(collection(db, "Users"), {
         uid: userId,
         displayName: displayName,
-        birthday: date
+        photo: image,
     });
 }
 
 export const dataUser = async () => {
     const querySnapshot = await getDocs((collection(db, "Users")));
-    const user = [];
+    const data = [];
     querySnapshot.forEach((doc) => {
-        if (doc.data().uid === auth.currentUser.uid){
-            user.push(doc.data().displayName);
+        if (doc.data().uid === auth.currentUser.uid) {
+            const user = doc.data().displayName;
+            data.push(user, doc.data().photo);
         }
-      });
-      return user.join('');
+    });
+    console.log(data);
+    return {
+        user: data[0],
+        img: data[1],
+    }
 }
 
-export const savePost = async (description) => {
-    // saveImg(img)
+const saveImg = async (file) => {
+    const storageRef = ref(storage, `imagesDashboard/${file.name}`);
+    await uploadBytes(storageRef, file);
+    return await getDownloadURL(storageRef);
+}
+
+export const savePost = async (description, img) => {
+    if (img != '') {
+        img = await saveImg(img)
+    }
     if (auth.currentUser.displayName == null) {
-        dataUser().then(user => {
+        dataUser().then(data => {
             addDoc(collection(db, "Posts"), {
                 uid: auth.currentUser.uid,
-                name: user,
+                name: data.user,
                 description: description,
-                image: "img",
+                image: img,
                 datepost: Timestamp.fromDate(new Date()),
                 likes: [],
                 likesCounter: 0,
@@ -55,13 +79,13 @@ export const savePost = async (description) => {
             uid: auth.currentUser.uid,
             name: auth.currentUser.displayName,
             description: description,
-            image: "img",
+            image: img,
             datepost: Timestamp.fromDate(new Date()),
             likes: [],
             likesCounter: 0,
         });
     }
-    
+
 }
 
 export const dataPost = async () => {
@@ -87,16 +111,16 @@ export const updateLikes = async (id) => {
     const docSnap = await getDoc(postRef);
     const postData = docSnap.data();
     const likesCount = postData.likesCounter;
-  
+
     if ((postData.likes).includes(userIdentifier)) {
-      await updateDoc(postRef, {
-        likes: arrayRemove(userIdentifier),
-        likesCounter: likesCount - 1,
-      });
+        await updateDoc(postRef, {
+            likes: arrayRemove(userIdentifier),
+            likesCounter: likesCount - 1,
+        });
     } else {
-      await updateDoc(postRef, {
-        likes: arrayUnion(userIdentifier),
-        likesCounter: likesCount + 1,
-      });
+        await updateDoc(postRef, {
+            likes: arrayUnion(userIdentifier),
+            likesCounter: likesCount + 1,
+        });
     }
-  };
+};

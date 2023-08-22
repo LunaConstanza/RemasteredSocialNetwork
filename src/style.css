@@ -41,6 +41,9 @@ h5 {
     font-size: 1.4rem;
 }
 
+a{
+    cursor: pointer;
+}
 /**********Imagen de inicio********/
 .mainLogo {
     position: fixed;
@@ -222,7 +225,7 @@ a:hover {
 
 .formRegister {
     display: grid;
-    grid-template-columns: 30% 40%;
+    grid-template-columns: 25% 45%;
     justify-content: center;
     width: 100%;
     margin: 0 auto;
@@ -238,9 +241,10 @@ a:hover {
     text-align: left;
 }
 
-.formRegister .inputDate {
+.formRegister .inputPhoto {
     grid-column: 2/3;
-    padding: 0 10px;
+    padding: 0;
+    align-self: center;
 }
 
 .formRegister .submitRegister {
@@ -269,31 +273,53 @@ a:hover {
 }
 
 /***************************    DASHBOARD *****************************/
+
 .mainDash {
     display: grid;
-    width: 60%;
+    width: 85%;
     height: 80%;
-    margin: auto;
-    row-gap: 25px;
+    margin: 2% auto;
+    grid-template-columns: 25% auto;
+    grid-template-rows: 30% auto;
+    grid-template-areas:
+        'header main'
+        'profile main';
+    gap: 25px;
+}
+
+/*************HEADER*************/
+header {
+    text-align: center;
+    /* grid-area: header; */
 }
 
 .mainDash_profile {
+    grid-area: profile;
     display: grid;
-    grid-template-columns: 65% 35%;
-    grid-template-rows: auto;
+    grid-template-columns: auto;
+    grid-template-rows: 40% 30% 30%;
     align-items: center;
-    padding: 10px 20px;
+    padding: 15px 20px;
     border: 1px solid var(--white-color);
     box-shadow: 0 0 5px var(--bluelight-color), 0 0 15px var(--bluelight-color),
         0 0 25px var(--bluelight-color);
-    border-radius: 30px 30px 0 0;
+    border-radius: 30px 0 0 30px;
+}
+
+.mainDash_profile img {
+    grid-row: 1/2;
+    width: 60%;
+    justify-self: center;
+    border-radius: 200%;
+    border: 2px solid var(--white-color);
+    box-shadow: 0 0 5px var(--bluelight-color), 0 0 15px var(--bluelight-color),
+    0 0 25px var(--bluelight-color);
+    margin-top: 20px;
 }
 
 .mainDash_profile h4 {
+    grid-row: 2/3;
     font-weight: normal;
-    grid-column: 1/2;
-    justify-self: start;
-    text-align: left;
 }
 
 .mainDash_profile .h4bold {
@@ -304,10 +330,17 @@ a:hover {
 }
 
 .mainDash_profile .btnLogOut {
-    grid-column: 2/3;
-    justify-self: end;
+    grid-row: 3/4;
+    justify-self: center;
     margin: 0;
     font-size: 0.9rem;
+}
+
+.mainDash_board{
+    grid-area: main;
+    box-shadow: 0 0 5px var(--pink-color), 0 0 15px var(--pink-color), 0 0 25px var(--pink-color);
+    border: 1px solid var(--white-color);
+    border-radius: 30px 30px 0 0;
 }
 
 .mainDash_board_createPost {
@@ -367,8 +400,6 @@ a:hover {
 
 .mainDash_board_publications {
     grid-column: 3/4;
-    box-shadow: 0 0 5px var(--pink-color), 0 0 15px var(--pink-color), 0 0 25px var(--pink-color);
-    border: 1px solid var(--white-color);
     height: 600px;
     display: grid;
     grid-template-rows: 12% 88%;
@@ -465,12 +496,10 @@ a:hover {
 }
 
 .mainDash_board_publications_content_img{
-    /* width: auto; */
-    /* height: 100px; */
-    /* grid-row: 2/3; */
     text-align: center;
     margin: 10px;
 }
+
 .mainDash_board_publications_content_text {
     text-align: left;
     /* grid-row: 3/4; */

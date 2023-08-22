@@ -33,16 +33,16 @@ const register = (navigateTo) => {
     inputPassword.setAttribute("maxlength", "14");
     inputPassword.setAttribute("required", "");
 
-    const labelDate = document.createElement("label");
-    labelDate.setAttribute("for", "date");
-    labelDate.innerHTML = `Fecha de Nacim.`;
+    const labelPhoto = document.createElement("label");
+    labelPhoto.setAttribute("for", "photo");
+    labelPhoto.innerHTML = `Foto de perfil`;
 
-    const inputDate = document.createElement("input");
-    inputDate.setAttribute("type", "date");
-    inputDate.setAttribute("id", "date");
-    inputDate.classList.add("inputDate");
-    inputDate.setAttribute("max", "2007-12-31");
-    inputDate.setAttribute("required", "");
+    const inputPhoto = document.createElement("input");
+    inputPhoto.setAttribute("type", "file");
+    inputPhoto.setAttribute("id", "photo");
+    inputPhoto.classList.add("inputPhoto");
+    inputPhoto.setAttribute('accept', 'image/png, image/jpeg');
+    inputPhoto.setAttribute("required", "");
 
     const btnSend = document.createElement("input");
     btnSend.setAttribute("type", "submit");
@@ -54,7 +54,7 @@ const register = (navigateTo) => {
     btnBack.innerHTML = `<i class="fa-solid fa-arrow-left"></i> VOLVER`;
     
     containerRegister.append(headerLogo(), subTitle, formRegister);
-    formRegister.append(inputNameAndLastName, inputMail, inputPassword, labelDate, inputDate, btnSend, btnBack);
+    formRegister.append(inputNameAndLastName, inputMail, inputPassword, labelPhoto, inputPhoto, btnSend, btnBack);
     
     btnBack.addEventListener("click", () => {
         navigateTo('/')
@@ -62,12 +62,12 @@ const register = (navigateTo) => {
 
     formRegister.addEventListener("submit", (e) => {
         e.preventDefault();
-        const nameLastname = document.getElementById("nameLastname").value;
-        const dateOfBirth = document.getElementById("date").value;
-        const email = document.getElementById("email").value;
-        const password = document.getElementById("password").value;
+        const nameLastname = inputNameAndLastName.value;
+        const photo = inputPhoto.files[0];
+        const email = inputMail.value;
+        const password = inputPassword.value;
     
-        registerUser(email, password, nameLastname, dateOfBirth);
+        registerUser(email, password, nameLastname, photo);
         navigateTo('/');
     });
 

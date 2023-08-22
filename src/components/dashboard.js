@@ -1,4 +1,4 @@
-import {auth} from "../lib/index.js"
+import { auth } from "../lib/index.js"
 import { closeSesion, currentChange } from "../lib/auth.js";
 import { dataPost, savePost, dataUser, deletePost, editPost, updateLikes } from "../lib/store.js";
 import { headerLogo } from "./h&f.js";
@@ -14,11 +14,13 @@ const dashboard = (navigateTo) => {
     // ------- PERFIL-----------
     const profile = document.createElement('div');
     profile.classList.add('mainDash_profile');
+    const photoUser = document.createElement('img');
+    photoUser.setAttribute('alt', 'photo of user')
     const user = document.createElement('h4');
     user.setAttribute('id', 'dataUser');
-    // console.log(dataUser());
-    dataUser().then(displayName => {
-        user.innerHTML = `<span class="h4bold">Hola!</span> ${displayName}`;
+    dataUser().then(data => {
+        photoUser.setAttribute('src', data.img)
+        user.innerHTML = `<span class="h4bold">Hola!</span> ${data.user}`;
     })
 
     const btnLogOut = document.createElement('button');
@@ -52,16 +54,17 @@ const dashboard = (navigateTo) => {
 
     const inputCreatePost = document.createElement('textarea');
     inputCreatePost.classList.add('mainDash_board_createPost_textarea');
+    inputCreatePost.setAttribute('name', 'textPost')
     inputCreatePost.setAttribute('placeholder', 'Escribe aquí...');
     inputCreatePost.setAttribute('maxLength', '1000');
-    inputCreatePost.setAttribute('required', '');
-    inputCreatePost.setAttribute('autofocus', '');
+    // inputCreatePost.setAttribute('required', '');
+    // inputCreatePost.setAttribute('autofocus', '');
     inputCreatePost.setAttribute('id', 'text-description');
 
     const inputImg = document.createElement('input');
-    inputImg.setAttribute('accept', 'image/jpg');
+    inputImg.setAttribute('accept', 'image/png, image/jpeg');
     inputImg.setAttribute('type', 'file');
-
+    inputImg.setAttribute('placeholder', 'Agregar imagen');
 
     const submitPost = document.createElement('button');
     submitPost.setAttribute('type', 'submit');
@@ -88,7 +91,7 @@ const dashboard = (navigateTo) => {
 
     // ------- APPENDCHILD -------------
     containerDashboard.append(headerLogo(), profile, board);
-    profile.append(user, btnLogOut);
+    profile.append(photoUser, user, btnLogOut);
     board.append(divOverlay, publications);
     divOverlay.appendChild(createPost)
     createPost.append(btnClose, titleCreatePost, formCreatePost);
@@ -101,9 +104,9 @@ const dashboard = (navigateTo) => {
         dataPost().then(res => {
             res.forEach(doc => {
                 const post = doc.data();
-                const date = post.datepost.toDate().toString().slice(0,21)
+                const date = post.datepost.toDate().toString().slice(0, 21)
                 const country = post.datepost.toDate().toString().slice(52, -1);
-                
+
                 const content = () => {
                     if (post.image) {
                         return '<div class="mainDash_board_publications_content1">'
@@ -113,7 +116,7 @@ const dashboard = (navigateTo) => {
                 }
 
                 const likes = (uid) => {
-                    if(post.likes.includes(uid)){
+                    if (post.likes.includes(uid)) {
                         // console.log('le di like');
                         return '<i class="fa-solid fa-star"></i>';
                     } else {
@@ -169,16 +172,16 @@ const dashboard = (navigateTo) => {
 
             });
             scrollContent.innerHTML = html;
-                
+
             const btnsEdit = document.querySelectorAll('.btnEdit');
             const edits = document.querySelectorAll('.mainDash_board_publications_content_text');
             const btnDelete = document.querySelectorAll('.btnDelete');
             const likeBtn = document.querySelectorAll('.btn-like');
-            
+
             btnsEdit.forEach(btn => {
                 btn.addEventListener('click', () => {
                     edits.forEach(post => {
-                        if(post.id === btn.value){
+                        if (post.id === btn.value) {
                             const input = document.createElement('textarea')
                             input.classList.add('mainDash_board_publications_content_text_edit')
                             input.value = post.textContent;
@@ -201,15 +204,15 @@ const dashboard = (navigateTo) => {
                                 }
 
                             });
-                            
+
                             btn.addEventListener('click', () => {
                                 editPost(btn.value, input.value).then(() => postDisplay());
                             })
-                            
+
                         }
                     });
                 })
-                
+
             })
 
             btnDelete.forEach((btn) => {
@@ -226,16 +229,16 @@ const dashboard = (navigateTo) => {
                 btnL.addEventListener('click', () => {
                     updateLikes(btnL.value);
                     postDisplay();
-              });
+                });
             });
 
         });
     };
     postDisplay();
-    
+
     // ----- Abrir modal para publicar ------
     btnPlus.addEventListener('click', () => {
-        inputCreatePost.focus();
+        // inputCreatePost.focus();
         divOverlay.classList.add("active");
         createPost.classList.add("active");
     })
@@ -243,16 +246,17 @@ const dashboard = (navigateTo) => {
     // ----- PUBLICAR POST -----------
     formCreatePost.addEventListener('submit', (e) => {
         e.preventDefault();
-        const post = inputCreatePost.value;
-        // const img = inputImg.files;
-        // console.log(img[0]);
-        savePost(post);
+        const post = inputCreatePost.value
+        console.log(post);
+        let img = inputImg.files[0];
+        console.log(img);
+        img = img != undefined ? img : '';
+        savePost(post, img).then(() => postDisplay());
         formCreatePost.reset();
         divOverlay.classList.remove("active");
         createPost.classList.remove("active");
-        postDisplay();
     });
-    
+
     // Cerrar modal
     btnClose.addEventListener("click", () => {
         divOverlay.classList.remove("active");
